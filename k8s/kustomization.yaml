@@ -7,5 +7,5 @@ resources:
   - cert-manager
   - grafana
   - otel
-  - prometheus-operator-crds
+#  - prometheus-operator-crds
   - victoria-metrics

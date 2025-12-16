@@ -5,6 +5,11 @@ resources:
   - grafana.yaml
   - datasource-vm-logs.yaml
   - datasource-vm-metrics.yaml
+  - datasource-vm-prometheus.yaml
+  - dashboard-metrics-server-go.yaml
+  - dashboard-vm-logs-single.yaml
+  - dashboard-vm-logs-simple-logs.yaml
+  - dashboard-vm-metrics-single.yaml
 
 helmCharts:
   - name: grafana-operator

@@ -12,6 +12,9 @@ rules:
   - apiGroups: [""]
     resources: [ nodes, pods, namespaces, services, endpoints, resourcequotas, replicationcontrollers, persistentvolumes, persistentvolumeclaims, limitranges ]
     verbs: [ get, list, watch ]
+  - apiGroups: [""]
+    resources: [ configmaps ]
+    verbs: [ get ]
   - apiGroups: [ "apps" ]
     resources: [ deployments, statefulsets, daemonsets, replicasets ]
     verbs: [ get, list, watch ]
@@ -36,6 +39,14 @@ rules:
   - apiGroups: [ "networking.k8s.io" ]
     resources: [ ingresses ]
     verbs: [ get, list, watch ]
+  - apiGroups: [ "monitoring.coreos.com" ]
+    resources: [ servicemonitors, podmonitors ]
+    verbs: [ "*" ]
+  - apiGroups: [""]
+    resources: [ "nodes/metrics" ]
+    verbs: [ get, list, watch ]
+  - nonResourceURLs: [ "/api", "/api/*", "/apis", "/apis/*", "/metrics" ]
+    verbs: [ get ]
   - apiGroups: [ "scheduling.k8s.io" ]
     resources: [ priorityclasses ]
     verbs: [ get, list, watch ]
@@ -51,4 +62,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: metrics-collector
+    namespace: monitoring
+  - kind: ServiceAccount
+    name: metrics-targetallocator
     namespace: monitoring

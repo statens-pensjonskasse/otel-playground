@@ -1,0 +1,91 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: metrics-server-go-process
+  namespace: monitoring
+spec:
+  folder: General
+  allowCrossNamespaceImport: true
+  instanceSelector:
+    matchLabels:
+      grafana: main
+  json: |-
+    {
+      "id": null,
+      "uid": "metrics-server-go-process",
+      "title": "Metrics Server: Go & Process",
+      "tags": ["kubernetes", "metrics-server", "go", "process"],
+      "timezone": "",
+      "schemaVersion": 39,
+      "version": 1,
+      "refresh": "30s",
+      "time": { "from": "now-1h", "to": "now" },
+      "templating": {
+        "list": [
+          {
+            "name": "job",
+            "type": "query",
+            "datasource": "Prometheus (VictoriaMetrics)",
+            "refresh": 2,
+            "query": "label_values(go_goroutines, job)",
+            "includeAll": true,
+            "multi": true,
+            "current": {"text": "All", "value": "$__all"}
+          }
+        ]
+      },
+      "panels": [
+        {
+          "type": "timeseries",
+          "title": "Go Goroutines",
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+          "datasource": "Prometheus (VictoriaMetrics)",
+          "targets": [
+            {
+              "expr": "sum(go_goroutines{job=~\"$job\"}) by (job)",
+              "legendFormat": "{{job}}",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "Process RSS (bytes)",
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+          "datasource": "Prometheus (VictoriaMetrics)",
+          "targets": [
+            {
+              "expr": "sum(process_resident_memory_bytes{job=~\"$job\"}) by (job)",
+              "legendFormat": "{{job}}",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "Process CPU seconds (rate)",
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+          "datasource": "Prometheus (VictoriaMetrics)",
+          "targets": [
+            {
+              "expr": "sum(rate(process_cpu_seconds_total{job=~\"$job\"}[5m])) by (job)",
+              "legendFormat": "{{job}}",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "Go Alloc (bytes)",
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+          "datasource": "Prometheus (VictoriaMetrics)",
+          "targets": [
+            {
+              "expr": "sum(go_memstats_alloc_bytes{job=~\"$job\"}) by (job)",
+              "legendFormat": "{{job}}",
+              "refId": "A"
+            }
+          ]
+        }
+      ]
+    }

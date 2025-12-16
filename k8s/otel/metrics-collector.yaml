@@ -4,9 +4,18 @@ metadata:
   name: metrics
   namespace: monitoring
 spec:
-  mode: deployment
+  mode: statefulset
   serviceAccount: metrics-collector
   serviceName: metrics-collector
+  # Enable Target Allocator to discover scrape targets from Prometheus Operator CRDs
+  targetAllocator:
+    enabled: true
+    prometheusCR:
+      enabled: true
+      # Select all ServiceMonitors/PodMonitors/Probes across all namespaces by default.
+      # Narrow these selectors if you want to limit what gets scraped.
+      serviceMonitorSelector: { }
+      podMonitorSelector: { }
   config:
     receivers:
       otlp:
@@ -17,8 +26,10 @@ spec:
             endpoint: 0.0.0.0:4318
       k8s_cluster:
         collection_interval: 60s
-      prometheusremotewrite:
-        endpoint: 0.0.0.0:19290
+      # This receiver will be populated with scrape jobs discovered by the Target Allocator
+      prometheus:
+        config:
+          scrape_configs: [ ]
 
     processors:
       batch:
@@ -37,12 +48,10 @@ spec:
       otlphttp/victoriametrics:
         # https://docs.victoriametrics.com/guides/getting-started-with-opentelemetry/#victoriametrics
         metrics_endpoint: http://vmsingle-victoria-metrics.monitoring.svc.cluster.local:8428/opentelemetry/v1/metrics
-        tls:
-          insecure: true
 
     service:
       pipelines:
         metrics:
-          receivers: [ prometheusremotewrite, otlp, k8s_cluster ]
-          processors: [ deltatocumulative, batch, memory_limiter ]
+          receivers: [ prometheus, otlp, k8s_cluster ]
+          processors: [ memory_limiter, deltatocumulative, batch ]
           exporters: [ otlphttp/victoriametrics ]

@@ -1,0 +1,13 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: victoria-metrics-single-node
+  namespace: monitoring
+spec:
+  folder: General
+  allowCrossNamespaceImport: true
+  instanceSelector:
+    matchLabels:
+      grafana: main
+  grafanaCom:
+    id: 10229
