@@ -11,6 +11,7 @@ spec:
   plugins:
     - name: victoriametrics-metrics-datasource
       version: 0.19.7
+  uid: vm-metrics
   datasource:
     name: "Victoria Metrics"
     type: victoriametrics-metrics-datasource

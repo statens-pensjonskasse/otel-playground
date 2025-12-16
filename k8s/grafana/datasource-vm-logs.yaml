@@ -11,6 +11,7 @@ spec:
   plugins:
     - name: victoriametrics-logs-datasource
       version: 0.22.4
+  uid: vm-logs
   datasource:
     name: "Victoria Logs"
     type: victoriametrics-logs-datasource
