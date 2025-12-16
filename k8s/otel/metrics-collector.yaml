@@ -6,6 +6,7 @@ metadata:
 spec:
   mode: deployment
   serviceAccount: metrics-collector
+  serviceName: metrics-collector
   config:
     receivers:
       otlp:
@@ -16,6 +17,8 @@ spec:
             endpoint: 0.0.0.0:4318
       k8s_cluster:
         collection_interval: 60s
+      prometheusremotewrite:
+        endpoint: 0.0.0.0:19290
 
     processors:
       batch:
@@ -40,6 +43,6 @@ spec:
     service:
       pipelines:
         metrics:
-          receivers: [ otlp, k8s_cluster ]
+          receivers: [ prometheusremotewrite, otlp, k8s_cluster ]
           processors: [ deltatocumulative, batch, memory_limiter ]
           exporters: [ otlphttp/victoriametrics ]
